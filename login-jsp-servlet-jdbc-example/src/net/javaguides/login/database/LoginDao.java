@@ -10,29 +10,31 @@ import net.javaguides.login.bean.LoginBean;
 
 public class LoginDao {
 
-	public boolean validate(LoginBean loginBean) throws ClassNotFoundException {
-		boolean status = false;
+	public ResultSet validate(LoginBean loginBean) throws ClassNotFoundException {
+		ResultSet rs = null;
 
 		Class.forName("com.mysql.jdbc.Driver");
 
-		try (Connection connection = DriverManager
-				.getConnection("jdbc:mysql://localhost:3306/mysql_database?useSSL=false", "root", "root");
+		try (Connection conn = DriverManager
+				.getConnection("jdbc:mysql://45.67.231.181:3306/mio_glossario?characterEncoding=latin1&useConfigs=maxPerformance", loginBean.getUsername(), loginBean.getPassword());
 
 				// Step 2:Create a statement using connection object
-				PreparedStatement preparedStatement = connection
-						.prepareStatement("select * from login where username = ? and password = ? ")) {
-			preparedStatement.setString(1, loginBean.getUsername());
-			preparedStatement.setString(2, loginBean.getPassword());
+				PreparedStatement prepStat = conn
+						.prepareStatement("call	mio_glossario.sp_view_mg_languages	('cv',@ret_value,@err_mess) ;")) {
 
-			System.out.println(preparedStatement);
-			ResultSet rs = preparedStatement.executeQuery();
-			status = rs.next();
+			System.out.println(prepStat);
+			rs = prepStat.executeQuery();
+			
+			prepStat.close();
 
 		} catch (SQLException e) {
 			// process sql exception
 			printSQLException(e);
+			
+			rs = null ;
 		}
-		return status;
+		
+		return rs;
 	}
 
 	private void printSQLException(SQLException ex) {
