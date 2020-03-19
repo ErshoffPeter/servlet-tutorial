@@ -1,6 +1,9 @@
 package net.javaguides.login.web;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -54,7 +57,19 @@ public class LoginServlet extends HttpServlet {
 		loginBean.setPassword(password);
 
 		try {
-			rs = loginDao.validate(loginBean) ;
+			ResultSet rs = null;
+
+			Class.forName("com.mysql.cj.jdbc.Driver");
+
+			Connection conn = DriverManager
+					.getConnection("jdbc:mysql://45.67.231.181:3306/mio_glossario?characterEncoding=latin1&useConfigs=maxPerformance", loginBean.getUsername(), loginBean.getPassword());
+
+					// Step 2:Create a statement using connection object
+					PreparedStatement prepStat = conn
+							.prepareStatement("call	mio_glossario.sp_view_mg_languages	('cv',@ret_value,@err_mess) ;") ;
+
+			System.out.println(prepStat);
+			rs = prepStat.executeQuery();
 			
 			if (rs != null) {
 				//HttpSession session = request.getSession();
@@ -81,6 +96,8 @@ public class LoginServlet extends HttpServlet {
 					  out.println("</TR>");
 					  }
 					 out.println("</TABLE></P>");
+						
+					prepStat.close();
 				 } else {
 				HttpSession session = request.getSession();
 				//session.setAttribute("user", username);
