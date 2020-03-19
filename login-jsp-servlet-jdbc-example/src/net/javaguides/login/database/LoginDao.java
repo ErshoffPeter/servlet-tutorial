@@ -10,31 +10,20 @@ import net.javaguides.login.bean.LoginBean;
 
 public class LoginDao {
 
-	public ResultSet validate(LoginBean loginBean) throws ClassNotFoundException {
-		ResultSet rs = null;
-
+	public Connection validate(LoginBean loginBean) throws ClassNotFoundException {
+		Connection conn = null;
+		
 		Class.forName("com.mysql.jdbc.Driver");
 
-		try (Connection conn = DriverManager
-				.getConnection("jdbc:mysql://45.67.231.181:3306/mio_glossario?characterEncoding=latin1&useConfigs=maxPerformance", loginBean.getUsername(), loginBean.getPassword());
-
-				// Step 2:Create a statement using connection object
-				PreparedStatement prepStat = conn
-						.prepareStatement("call	mio_glossario.sp_view_mg_languages	('cv',@ret_value,@err_mess) ;")) {
-
-			System.out.println(prepStat);
-			rs = prepStat.executeQuery();
-			
-			prepStat.close();
-
-		} catch (SQLException e) {
+		try{
+			conn = DriverManager
+					.getConnection("jdbc:mysql://45.67.231.181:3306/mio_glossario?characterEncoding=latin1&useConfigs=maxPerformance", loginBean.getUsername(), loginBean.getPassword());		
+							} catch (SQLException e) { 
 			// process sql exception
 			printSQLException(e);
-			
-			rs = null ;
-		}
-		
-		return rs;
+			conn = null;
+			}
+		return conn;
 	}
 
 	private void printSQLException(SQLException ex) {

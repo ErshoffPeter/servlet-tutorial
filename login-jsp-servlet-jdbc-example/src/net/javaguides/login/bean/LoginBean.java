@@ -9,6 +9,7 @@ public class LoginBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String username;
 	private String password;
+	private String languagename;
 
 	public String getUsername() {
 		return username;
@@ -24,5 +25,13 @@ public class LoginBean implements Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getLanguagename() {
+		return languagename;
+	}
+
+	public void setLanguagename(String languagename) {
+		this.languagename = languagename;
 	}
 }

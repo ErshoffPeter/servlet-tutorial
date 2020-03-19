@@ -4,11 +4,11 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<title>Language list retrieving</title>
 </head>
 <body>
 	<div align="center">
-		<h1>Employee Login Form</h1>
+		<h1>Just Login Form</h1>
 		<form action="<%=request.getContextPath()%>/login" method="post">
 			<table style="with: 100%">
 				<tr>
@@ -18,6 +18,10 @@
 				<tr>
 					<td>Password</td>
 					<td><input type="password" name="password" /></td>
+				</tr>
+				<tr>
+					<td>Language name</td>
+					<td><input type="text" name="languagename" /></td>
 				</tr>
 
 			</table>
