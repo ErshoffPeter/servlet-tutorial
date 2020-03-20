@@ -31,48 +31,53 @@ import java.util.Locale;
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private LoginDao loginDao;
-	ResultSet rs = null;
-
+	private LoginBean loginBean ; 
+	private ResultSet rs ;
 
 	public void init() {
 		loginDao = new LoginDao();
+		loginBean = new LoginBean();
+		rs = null;
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		PrintWriter out = response.getWriter(  ); 
+		response.setContentType( "text/html" );
+        response.setCharacterEncoding("UTF-8");
+
+        PrintWriter out = response.getWriter(  ); 
+		
 		response.setContentType("text/html"); 
-		    out.println("<html>");
+			out.println("<!DOCTYPE html>");
+			out.println("<html lang=\"en\">");
+			out.println("<html>");
+		    out.println("<meta charset=\"UTF-8\" />");
 		    out.println("<head>");
+		    out.println("<meta charset=\"UTF-8\" />");
 
 		out.println("<title> Table's content </title>");
 		    out.println("</head>");
 		    out.println("<body>");
+		    out.println("<meta charset=\"UTF-8\" />");
 		    out.println("<H1>Languages' list</H1></br>"); 
 
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		String languagename = request.getParameter("languagename");
-		LoginBean loginBean = new LoginBean();
-		loginBean.setUsername(username);
-		loginBean.setPassword(password);
-		loginBean.setLanguagename(languagename);
+		
+		if(username != "" && username != null)
+			loginBean.setUsername(username);
+		
+		if(password != "" && password != null)
+			loginBean.setPassword(password);
+		
+		if(languagename != "" && languagename != null)
+			loginBean.setLanguagename(languagename);
 
 		try {
-		    Statement prepStat = null;
-			ResultSet rs = null;
-
-			Class.forName("com.mysql.cj.jdbc.Driver");
-
-			Connection conn = DriverManager
-					.getConnection("jdbc:mysql://45.67.231.181:3306/mio_glossario?characterEncoding=latin1&useConfigs=maxPerformance", loginBean.getUsername(), loginBean.getPassword());
-
-					// Step 2:Create a statement using connection object
-			prepStat = conn.createStatement();
-
-			System.out.println(prepStat);
-			rs = prepStat.executeQuery("call	mio_glossario.sp_view_mg_languages	('"+loginBean.getLanguagename()+"',@ret_value,@err_mess) ;");
+			
+			rs = loginDao.validate(loginBean); 
 			
 			if (rs != null) {
 				//HttpSession session = request.getSession();
@@ -80,7 +85,7 @@ public class LoginServlet extends HttpServlet {
 //				response.sendRedirect("loginsuccess.jsp");
 					int rowCount = 0;
 	
-					 out.println("<form action=\"<%=request.getContextPath()%>/login\" method=\"post\">") ;
+					 out.println("<form action=\""+request.getContextPath()+"\\login.jsp\" method=\"post\">") ;
 					 out.println("<P ALIGN='center'><TABLE BORDER=1>");
 					 java.sql.ResultSetMetaData rsmd = rs.getMetaData();
 					 int columnCount = rsmd.getColumnCount();
@@ -99,17 +104,19 @@ public class LoginServlet extends HttpServlet {
 						  try {
 						  	cur_str = rs.getString(i + 1) ;
 						  } catch(NullPointerException | SQLException e) {
+							  System.err.println("Message: " + e.getMessage());
 							  cur_str = "";
 						  }
 						  out.println("<TD>" + cur_str + "</TD>");
+						  
+//						  if ( rsmd.getColumnLabel(i + 1).compareTo("native_name")==0)
+//							  System.out.println("[native_name]: " + cur_str);
 					    }
 					  out.println("</TR>");
 					  }
 					 out.println("</TABLE></P>");
 					 out.println("<input type=\"submit\" value=\"Submit\" />");
 					 out.println("</form>");
-						
-					prepStat.close();
 				 } else {
 				HttpSession session = request.getSession();
 				//session.setAttribute("user", username);

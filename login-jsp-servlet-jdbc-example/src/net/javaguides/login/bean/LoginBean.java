@@ -1,6 +1,8 @@
 package net.javaguides.login.bean;
 
 import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class LoginBean implements Serializable {
 	/**
